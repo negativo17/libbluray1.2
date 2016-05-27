@@ -1,8 +1,8 @@
 %global build_pdf_doc 0
 
 Name:           libbluray
-Version:        0.9.2
-Release:        2%{?dist}
+Version:        0.9.3
+Release:        1%{?dist}
 Summary:        Library to access Blu-Ray disks for video playback 
 License:        LGPLv2+
 URL:            http://www.videolan.org/developers/libbluray.html
@@ -15,14 +15,17 @@ BuildRequires:  java7-devel >= 1:1.7.0
 %else
 BuildRequires:  java-devel >= 1:1.7.0
 %endif
-BuildRequires:  jpackage-utils
 BuildRequires:  ant
-BuildRequires:  libxml2-devel
+BuildRequires:  autoconf
+BuildRequires:  automake
 BuildRequires:  doxygen
-BuildRequires:  texlive-latex
-BuildRequires:  graphviz
-BuildRequires:  freetype-devel
 BuildRequires:  fontconfig-devel
+BuildRequires:  freetype-devel
+BuildRequires:  graphviz
+BuildRequires:  jpackage-utils
+BuildRequires:  libtool
+BuildRequires:  libxml2-devel
+BuildRequires:  texlive-latex
 
 %description
 This package is aiming to provide a full portable free open source Blu-Ray
@@ -40,8 +43,6 @@ Requires:       java-headless >= 1:1.7.0
 Requires:       java >= 1:1.7.0
 %endif
 Requires:       jpackage-utils
-Obsoletes:      libbluray-java < 0.4.0-2
-Provides:       libbluray-java = %{version}-%{release}
 
 %description    bdj
 The %{name}-bdj package contains the jar file needed to add BD-J support to
@@ -68,11 +69,13 @@ developing applications that use %{name}.
 
 
 %build
-%if 0%{?fedora} > 20
+%if 0%{?fedora}
 export JDK_HOME="%{_jvmdir}/java-1.8.0"
 %else
 export JDK_HOME="%{_jvmdir}/java-1.7.0"
 %endif
+
+autoreconf -vif
 %configure --disable-static \
 %if %{build_pdf_doc}
            --enable-doxygen-pdf \
@@ -84,10 +87,6 @@ export JDK_HOME="%{_jvmdir}/java-1.7.0"
            --enable-examples \
            --enable-udf \
            --enable-bdjava
-
-# Fix rpath issue
-sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
-sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
 
 make %{?_smp_mflags}
 make doxygen-doc
@@ -132,6 +131,10 @@ install -Dp -m755 .libs/bdj_test %{buildroot}%{_bindir}/bdj_test;
 
 
 %changelog
+* Fri May 27 2016 Simone Caronni <negativo17@gmail.com> - 0.9.3-2
+- Update to 0.9.3.
+- Use autotools to get rid of rpath.
+
 * Tue Dec 15 2015 Simone Caronni <negativo17@gmail.com> - 0.9.2-2
 - Fix Java build requirements for RHEL/CentOS 7.
 
