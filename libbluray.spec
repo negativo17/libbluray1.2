@@ -2,15 +2,14 @@
 
 Name:           libbluray
 Version:        0.9.3
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Library to access Blu-Ray disks for video playback 
 License:        LGPLv2+
 URL:            http://www.videolan.org/developers/libbluray.html
 
 Source0:        ftp://ftp.videolan.org/pub/videolan/%{name}/%{version}/%{name}-%{version}.tar.bz2
 Patch0:         libbluray-0.8.0-no_doxygen_timestamp.patch
-# HandBrake 1.0 patch
-Patch1:         https://raw.githubusercontent.com/HandBrake/HandBrake/master/contrib/libbluray/A02-expose-clip_id.patch
+Patch1:         libbluray-0.9.3-fix_opening_libjvm_so.patch
 
 %if 0%{?rhel} == 6
 BuildRequires:  java7-devel >= 1:1.7.0 
@@ -50,11 +49,11 @@ Requires:       jpackage-utils
 The %{name}-bdj package contains the jar file needed to add BD-J support to
 %{name}. BD-J support is still considered alpha.
 
-%package utils
+%package        utils
 Summary:        Test utilities for %{name}
 Requires:       %{name}%{?_isa} = %{version}-%{release}
 
-%description utils
+%description    utils
 The %{name}-utils package contains test utilities for %{name}.
 
 %package        devel
@@ -67,8 +66,8 @@ developing applications that use %{name}.
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
+%patch0 -p1 -b .no_timestamp
+%patch1 -p1 -b .libjvm
 
 
 %build
@@ -112,7 +111,6 @@ install -Dp -m755 .libs/bdj_test %{buildroot}%{_bindir}/bdj_test;
 %postun -p /sbin/ldconfig
 
 %files
-%{!?_licensedir:%global license %%doc}
 %license COPYING
 %doc README.txt
 %{_libdir}/*.so.*
@@ -132,28 +130,28 @@ install -Dp -m755 .libs/bdj_test %{buildroot}%{_bindir}/bdj_test;
 %{_libdir}/*.so
 %{_libdir}/pkgconfig/%{name}.pc
 
-
 %changelog
-* Sun Jun 19 2016 Simone Caronni <negativo17@gmail.com> - 0.9.3-2
-- Add patch required for HandBrake 1.0.
+* Sat Dec 03 2016 Xavier Bachelot <xavier@bachelot.org> 0.9.3-3
+- Add patch to fix search paths for libjvm.so (RHBZ#1380437).
 
-* Fri May 27 2016 Simone Caronni <negativo17@gmail.com> - 0.9.3-2
-- Update to 0.9.3.
-- Use autotools to get rid of rpath.
-
-* Tue Dec 15 2015 Simone Caronni <negativo17@gmail.com> - 0.9.2-2
+* Sat Dec 03 2016 Simone Caronni <negativo17@gmail.com> - 0.9.3-2
+- Use autotools to get rid of RPATH.
 - Fix Java build requirements for RHEL/CentOS 7.
-
-* Sun Dec 06 2015 Simone Caronni <negativo17@gmail.com> - 0.9.2-1
-- Update to 0.9.2.
-
-* Sat Oct 31 2015 Simone Caronni <negativo17@gmail.com> - 0.9.0-1
-- Update to 0.9.0.
-- Clean up SPEC file.
+- Clean up SPEC file, rpmlint fixes.
 - Add license macro.
 
-* Thu Aug 20 2015 Simone Caronni <negativo17@gmail.com> - 0.8.1-1
-- Update to 0.8.1.
+* Wed May 18 2016 Xavier Bachelot <xavier@bachelot.org> 0.9.3-1
+- Update to 0.9.3.
+
+* Tue Mar 01 2016 Xavier Bachelot <xavier@bachelot.org> 0.9.2-1
+- Update to 0.9.2 (RHBZ#1287343).
+
+* Thu Feb 04 2016 Fedora Release Engineering <releng@fedoraproject.org> - 0.9.1-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_24_Mass_Rebuild
+
+* Fri Nov 13 2015 Dominik Mierzejewski <rpm@greysector.net> - 0.9.1-1
+- update to 0.9.1
+- mark license text as such
 
 * Wed Jun 17 2015 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0.8.0-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_23_Mass_Rebuild
