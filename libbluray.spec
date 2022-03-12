@@ -17,7 +17,7 @@ BuildRequires:  doxygen
 BuildRequires:  fontconfig-devel
 BuildRequires:  freetype-devel
 BuildRequires:  graphviz
-BuildRequires:  java-devel >= 1:1.8.0
+BuildRequires:  java-1.8.0-openjdk-devel >= 1:1.8.0
 BuildRequires:  jpackage-utils
 BuildRequires:  libtool
 BuildRequires:  libxml2-devel
